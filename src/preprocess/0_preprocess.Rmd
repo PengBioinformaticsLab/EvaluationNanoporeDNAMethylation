@@ -1,0 +1,209 @@
+---
+title: "Preprocess Scripts"
+date: "2024-07-10"
+---
+
+All the filepaths are relative to the .Rproj file.
+
+```{r setup, include=FALSE}
+#Before we start, set the working directory to where the .Rproj lives. here::here()
+knitr::opts_knit$set(root.dir = here::here())
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, include = FALSE, echo = FALSE, eval = FALSE}
+# This better output as your .Rproj location. NOT the .Rmd location.
+getwd()
+```
+
+Let us preprocess the data.
+
+# 1 Nanopore Preprocess
+
+Find your files to the three different .bedmethyl files:
+
+        "Su567-BTRC_131_Control_F_1.wf_mods.bedmethyl.gz"         
+        "Su567-BTRC_131_Control_F_2.wf_mods.bedmethyl.gz" 
+        "Su567-BTRC_131_Control_F_ungrouped.wf_mods.bedmethyl.gz"                                            
+
+
+Su349_BTRC_51_Control_M_analysis  Su636_BTRC_168_Control_M_merge_analysis
+Su395_BTRC_69_Control_M_analysis  Su779_BTRC_266_AUD_M_analysis
+[stevbroo@i68 Nanopore]$ realpath .
+/N/project/ICMH/CCBB/Yun
+
+```{r}
+source('src/preprocess/1_combine_haplotagged_bedmethyl.R')
+
+### Process samples
+#### File paths needed:
+nano_files_path <- 'data/Dec2024_comparison/Nanopore'
+
+sample_51_dir <- file.path(nano_files_path, 'Su349_BTRC_51_Control_M_analysis')
+sample_69_dir <- file.path(nano_files_path, 'Su395_BTRC_69_Control_M_analysis')
+sample_168_dir <- file.path(nano_files_path, 'Su636_BTRC_168_Control_M_merge_analysis')
+sample_266_dir <- file.path(nano_files_path, 'Su779_BTRC_266_AUD_M_analysis')
+
+
+nano_files_path_epic <- '../nanopore_epic/data'
+sample_541_dir <- file.path(nano_files_path_epic, 'sample_4059246541_analysis')
+sample_577_dir <- file.path(nano_files_path_epic, 'sample_4059246577_analysis')
+sample_475_dir <- file.path(nano_files_path_epic, 'sample_4059249475_Analysis')
+sample_500_dir <- file.path(nano_files_path_epic, 'sample_4059246500_analysis')
+
+
+### Output directory
+nano_data_dir <- '../../data/nanopore/'
+
+
+```
+
+Merge all of the haplotypes together and save as an .rds file in the output directory.
+
+
+
+
+
+
+```{r, eval = FALSE}
+######### EM-Seq sample pairs
+# 51
+mergeHapsAllMethylation(bedmethyl_file_hap1 = file.path(sample_51_dir, get_bedmethyl_files(sample_51_dir)['h1']),
+                        bedmethyl_file_hap2 = file.path(sample_51_dir, get_bedmethyl_files(sample_51_dir)['h2']),
+                        bedmethyl_file_ungrouped = file.path(sample_51_dir, get_bedmethyl_files(sample_51_dir)['ungr']),
+                        filename_out = file.path(nano_data_dir,
+                                                  get_bedmethyl_files(sample_51_dir)['sample_name']))
+
+gc()
+
+# 69
+mergeHapsAllMethylation(bedmethyl_file_hap1 = file.path(sample_69_dir, get_bedmethyl_files(sample_69_dir)['h1']),
+                        bedmethyl_file_hap2 = file.path(sample_69_dir, get_bedmethyl_files(sample_69_dir)['h2']),
+                        bedmethyl_file_ungrouped = file.path(sample_69_dir, get_bedmethyl_files(sample_69_dir)['ungr']),
+                        filename_out = file.path(nano_data_dir,
+                                                 get_bedmethyl_files(sample_69_dir)['sample_name']))
+
+gc()
+# 168
+mergeHapsAllMethylation(bedmethyl_file_hap1 = file.path(sample_168_dir, get_bedmethyl_files(sample_168_dir)['h1']),
+                        bedmethyl_file_hap2 = file.path(sample_168_dir, get_bedmethyl_files(sample_168_dir)['h2']),
+                        bedmethyl_file_ungrouped = file.path(sample_168_dir, get_bedmethyl_files(sample_168_dir)['ungr']),
+                        filename_out = file.path(nano_data_dir,
+                                                 get_bedmethyl_files(sample_168_dir)['sample_name']))
+
+gc()
+
+# 266
+mergeHapsAllMethylation(bedmethyl_file_hap1 = file.path(sample_266_dir, get_bedmethyl_files(sample_266_dir)['h1']),
+                        bedmethyl_file_hap2 = file.path(sample_266_dir, get_bedmethyl_files(sample_266_dir)['h2']),
+                        bedmethyl_file_ungrouped = file.path(sample_266_dir, get_bedmethyl_files(sample_266_dir)['ungr']),
+                        filename_out = file.path(nano_data_dir,
+                                                 get_bedmethyl_files(sample_266_dir)['sample_name']))
+gc()
+```
+
+
+
+```{r}
+# 475
+mergeHapsAllMethylation(bedmethyl_file_hap1 = file.path(sample_475_dir, get_bedmethyl_files(sample_475_dir)['h1']),
+                        bedmethyl_file_hap2 = file.path(sample_475_dir, get_bedmethyl_files(sample_475_dir)['h2']),
+                        bedmethyl_file_ungrouped = file.path(sample_475_dir, get_bedmethyl_files(sample_475_dir)['ungr']),
+                        filename_out = file.path(nano_data_dir, 'nano_475.rds'))
+
+gc()
+
+mergeHapsAllMethylation(bedmethyl_file_hap1 = file.path(sample_500_dir, get_bedmethyl_files(sample_500_dir)['h1']),
+                        bedmethyl_file_hap2 = file.path(sample_500_dir, get_bedmethyl_files(sample_500_dir)['h2']),
+                        bedmethyl_file_ungrouped = file.path(sample_500_dir, get_bedmethyl_files(sample_500_dir)['ungr']),
+                        filename_out = file.path(nano_data_dir, 'nano_500.rds'))
+
+gc()
+# 541
+mergeHapsAllMethylation(bedmethyl_file_hap1 = file.path(sample_541_dir, get_bedmethyl_files(sample_541_dir)['h1']),
+                        bedmethyl_file_hap2 = file.path(sample_541_dir, get_bedmethyl_files(sample_541_dir)['h2']),
+                        bedmethyl_file_ungrouped = file.path(sample_541_dir, get_bedmethyl_files(sample_541_dir)['ungr']),
+                        filename_out = file.path(nano_data_dir, 'nano_541.rds'))
+
+gc()
+# 577
+mergeHapsAllMethylation(bedmethyl_file_hap1 = file.path(sample_577_dir, get_bedmethyl_files(sample_577_dir)['h1']),
+                        bedmethyl_file_hap2 = file.path(sample_577_dir, get_bedmethyl_files(sample_577_dir)['h2']),
+                        bedmethyl_file_ungrouped = file.path(sample_577_dir, get_bedmethyl_files(sample_577_dir)['ungr']),
+                        filename_out = file.path(nano_data_dir, 'nano_577.rds'))
+gc()
+```
+
+
+#################################################################
+
+# EM-Seq Processing
+
+As above, start with finding your input filepaths.
+
+BTRC_168_BTRC_168_Control.CX_report.txt.gz
+BTRC_266_BTRC_266_AUD.CX_report.txt.gz
+
+
+```{r}
+source('2_save_EM_rds.R')
+
+
+########## Pathing
+em_input_dir <- '../../data/Dec2024_comparison/EM'
+
+#input
+em_51_path <- file.path(em_input_dir,
+                        'BTRC_51_BTRC_51_Control.CX_report.txt.gz')
+
+em_69_path <- file.path(em_input_dir,
+                         'BTRC_69_BTRC_69_Control.CX_report.txt.gz')
+
+em_168_path <- file.path(em_input_dir,
+                         'BTRC_168_BTRC_168_Control.CX_report.txt.gz')
+
+em_266_path <- file.path(em_input_dir,
+                         'BTRC_266_BTRC_266_AUD.CX_report.txt.gz')
+
+### Output directory
+em_data_dir <- '../../data/em-seq'
+```
+
+```{r,eval = FALSE}
+em_proc(em_filepath = em_51_path, output_filepath = file.path(em_data_dir, 'em_51.rds'))
+gc()
+em_proc(em_filepath = em_69_path, output_filepath = file.path(em_data_dir, 'em_69.rds'))
+gc()
+em_proc(em_filepath = em_168_path, output_filepath = file.path(em_data_dir, 'em_168.rds'))
+gc()
+em_proc(em_filepath = em_266_path, output_filepath = file.path(em_data_dir, 'em_266.rds'))
+gc()
+```
+
+#################################################################
+
+# DMR calling on one nanopore sample
+
+```{r}
+source('3_make_nano_DMR.R')
+
+
+# pathing
+sample_dir <- "../nanopore_epic/data/sample_4059249500_analysis"
+dmrs_out_dir <- "data/dmrs"
+
+
+dmrs_pipeline(sample_dir, dmrs_out_dir, "500", min_cov = 10)
+gc()
+```
+
+#################################################################
+
+# Creating annotations for gene regions, TSS, and CpG islands
+
+```{r}
+source('src/preprocess/4_create_annotations.R')
+make_annotations(reference_directory = 'data/reference')
+```
+
+
